@@ -1,3 +1,4 @@
+
 using dotnet_rpg.enums;
 using dotnet_rpg.models;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,12 @@ namespace dotnet_rpg.Controllers
         [HttpGet("{id}")]
         public ActionResult<Character> GetSingle(int id){
             return Ok(characters.FirstOrDefault<Character>(c => c.Id == id));
+        }
+
+        [HttpPost]
+        public ActionResult<List<Character>> AddCharacter(Character character){
+            characters.Add(character);
+            return Ok(characters);
         }
     }
 }
