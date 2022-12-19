@@ -1,5 +1,6 @@
 using dotnet_rpg.enums;
 using dotnet_rpg.models;
+using dotnet_rpg.Wrappers;
 
 namespace dotnet_rpg.Services.CharacterService
 {
@@ -24,20 +25,29 @@ namespace dotnet_rpg.Services.CharacterService
         }
         };
 
-        public List<Character> AddCharacter(Character character)
+        public async Task<ServiceResponse<List<Character>>> AddCharacter(Character character)
         {
+
+            var serviceResponse = new ServiceResponse<List<Character>>();
             characters.Add(character);
-            return characters;
+            serviceResponse.Data = characters;
+            return serviceResponse;
         }
 
-        public Character GetCharacterById(int id)
+        public async Task<ServiceResponse<Character>> GetCharacterById(int id)
         {
-            return characters.FirstOrDefault<Character>(c => c.Id == id)!;
+            var serviceResponse = new ServiceResponse<Character>();
+            var character = characters.FirstOrDefault<Character>(c => c.Id == id);
+            serviceResponse.Data = character;
+            return serviceResponse;
+            
         }
 
-        public List<Character> GetCharacters()
+        public async Task<ServiceResponse<List<Character>>> GetCharacters()
         {
-            return characters;
+            var serviceResponse = new ServiceResponse<List<Character>>();
+            serviceResponse.Data =characters;
+            return serviceResponse;
         }
     }
 }

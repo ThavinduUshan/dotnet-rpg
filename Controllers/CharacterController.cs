@@ -2,6 +2,7 @@
 using dotnet_rpg.enums;
 using dotnet_rpg.models;
 using dotnet_rpg.Services.CharacterService;
+using dotnet_rpg.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace dotnet_rpg.Controllers
@@ -18,18 +19,19 @@ namespace dotnet_rpg.Controllers
         }
         
         [HttpGet]
-        public ActionResult<List<Character>> Get(){
-            return Ok(_characterService.GetCharacters());
+        public async Task<ActionResult<ServiceResponse<List<Character>>>> Get(){
+
+            return Ok( await _characterService.GetCharacters());
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Character> GetSingle(int id){
-            return Ok(_characterService.GetCharacterById(id));
+        public async Task<ActionResult<ServiceResponse<Character>>> GetSingle(int id){
+            return Ok(await _characterService.GetCharacterById(id));
         }
 
         [HttpPost]
-        public ActionResult<List<Character>> AddCharacter(Character character){
-            return Ok(_characterService.AddCharacter(character));
+        public async Task<ActionResult<ServiceResponse<List<Character>>>> AddCharacter(Character character){
+            return Ok(await _characterService.AddCharacter(character));
         }
     }
 }
