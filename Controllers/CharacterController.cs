@@ -1,6 +1,7 @@
 
 using dotnet_rpg.enums;
 using dotnet_rpg.models;
+using dotnet_rpg.Services.CharacterService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace dotnet_rpg.Controllers
@@ -9,40 +10,26 @@ namespace dotnet_rpg.Controllers
     [Route("api/[controller]")]
     public class CharacterController : ControllerBase
     {
-        private static List<Character> characters = new List<Character>{
-            new Character{
-            Id = 1,
-            Name="Frodo",
-            Strength=10,
-            Defense=10,
-            Intelligence=10,
-            RpgClass = RpgClass.knight
-        },
-        new Character{
-            Id = 2,
-            Name="Sam",
-            Strength=5,
-            Defense=6,
-            Intelligence=8,
-            RpgClass = RpgClass.Cleric
-        }
-        };
+        private readonly ICharacterService _characterService;
 
+        public CharacterController(ICharacterService characterService)
+        {
+           _characterService = characterService;
+        }
         
         [HttpGet]
         public ActionResult<List<Character>> Get(){
-            return Ok(characters);
+            return Ok(_characterService.GetCharacters());
         }
 
         [HttpGet("{id}")]
         public ActionResult<Character> GetSingle(int id){
-            return Ok(characters.FirstOrDefault<Character>(c => c.Id == id));
+            return Ok(_characterService.GetCharacterById(id));
         }
 
         [HttpPost]
         public ActionResult<List<Character>> AddCharacter(Character character){
-            characters.Add(character);
-            return Ok(characters);
+            return Ok(_characterService.AddCharacter(character));
         }
     }
 }
