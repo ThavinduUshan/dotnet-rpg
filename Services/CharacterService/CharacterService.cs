@@ -12,7 +12,7 @@ namespace dotnet_rpg.Services.CharacterService
         public CharacterService(IMapper mapper)
         {
             _mapper = mapper;
-            
+
         }
 
         private static List<Character> characters = new List<Character>{
@@ -51,7 +51,7 @@ namespace dotnet_rpg.Services.CharacterService
             var character = characters.FirstOrDefault<Character>(c => c.Id == id);
             serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
             return serviceResponse;
-            
+
         }
 
         public async Task<ServiceResponse<List<GetCharacterDto>>> GetCharacters()
@@ -59,6 +59,69 @@ namespace dotnet_rpg.Services.CharacterService
             var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
             serviceResponse.Data = characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
             return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetCharacterDto>> UpdateCharacter(UpdateCharacterDto character)
+        {
+            var serviceResponse = new ServiceResponse<GetCharacterDto>();
+
+            try
+            {
+                var UpdateCharacter = characters.FirstOrDefault(c => c.Id == character.Id);
+
+                if (UpdateCharacter is null)
+                {
+                    throw new Exception($"The character which has id of {character.Id} is not found");
+                }
+
+                UpdateCharacter.Name = character.Name;
+                UpdateCharacter.Defense = character.Defense;
+                UpdateCharacter.Strength = character.Strength;
+                UpdateCharacter.Intelligence = character.Intelligence;
+                UpdateCharacter.RpgClass = character.RpgClass;
+
+                serviceResponse.Data = _mapper.Map<GetCharacterDto>(UpdateCharacter);
+
+                return serviceResponse;
+            }
+
+            catch (Exception Ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = Ex.Message;
+
+                return serviceResponse;
+            }
+        }
+
+        public async Task<ServiceResponse<List<GetCharacterDto>>> DeleteCharacter(int id)
+        {
+            var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
+
+
+            try
+            {
+                var character = characters.FirstOrDefault(c => c.Id == id);
+
+                if (character is null)
+                {
+                    throw new Exception($"The character which has id of {id} is not found");
+                }
+
+                characters.Remove(character);
+
+                serviceResponse.Data = characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
+
+                return serviceResponse;
+            }
+
+            catch (Exception Ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = Ex.Message;
+
+                return serviceResponse;
+            }
         }
     }
 }
