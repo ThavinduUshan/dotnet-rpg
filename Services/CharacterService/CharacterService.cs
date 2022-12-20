@@ -1,3 +1,5 @@
+using AutoMapper;
+using dotnet_rpg.Dtos.Character;
 using dotnet_rpg.enums;
 using dotnet_rpg.models;
 using dotnet_rpg.Wrappers;
@@ -6,6 +8,13 @@ namespace dotnet_rpg.Services.CharacterService
 {
     public class CharacterService : ICharacterService
     {
+        private readonly IMapper _mapper;
+        public CharacterService(IMapper mapper)
+        {
+            _mapper = mapper;
+            
+        }
+
         private static List<Character> characters = new List<Character>{
             new Character{
             Id = 1,
@@ -25,28 +34,30 @@ namespace dotnet_rpg.Services.CharacterService
         }
         };
 
-        public async Task<ServiceResponse<List<Character>>> AddCharacter(Character character)
+        public async Task<ServiceResponse<List<GetCharacterDto>>> AddCharacter(AddCharacterDto character)
         {
 
-            var serviceResponse = new ServiceResponse<List<Character>>();
-            characters.Add(character);
-            serviceResponse.Data = characters;
+            var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
+            var newCharacter = _mapper.Map<Character>(character);
+            newCharacter.Id = characters.Max(c => c.Id) + 1;
+            characters.Add(newCharacter);
+            serviceResponse.Data = characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Character>> GetCharacterById(int id)
+        public async Task<ServiceResponse<GetCharacterDto>> GetCharacterById(int id)
         {
-            var serviceResponse = new ServiceResponse<Character>();
+            var serviceResponse = new ServiceResponse<GetCharacterDto>();
             var character = characters.FirstOrDefault<Character>(c => c.Id == id);
-            serviceResponse.Data = character;
+            serviceResponse.Data = _mapper.Map<GetCharacterDto>(character);
             return serviceResponse;
             
         }
 
-        public async Task<ServiceResponse<List<Character>>> GetCharacters()
+        public async Task<ServiceResponse<List<GetCharacterDto>>> GetCharacters()
         {
-            var serviceResponse = new ServiceResponse<List<Character>>();
-            serviceResponse.Data =characters;
+            var serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
+            serviceResponse.Data = characters.Select(c => _mapper.Map<GetCharacterDto>(c)).ToList();
             return serviceResponse;
         }
     }
